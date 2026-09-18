@@ -237,7 +237,7 @@ h2.display { font-size: clamp(2rem, 4.2vw, 3.2rem); }
 .calc-label { font-family: var(--serif); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--butter); font-size: 1.02rem; }
 .calc-spend { font-family: var(--serif); font-weight: 900; font-size: clamp(3rem, 6vw, 4.4rem); line-height: 1; margin: 14px 0 4px; }
 .calc-spend small { font-family: var(--sans); font-weight: 400; font-size: 1.05rem; opacity: 0.8; margin-left: 6px; }
-.calc input[type='range'] { width: 100%; margin: 22px 0 8px; accent-color: var(--coral); height: 28px; cursor: pointer; }
+.calc input[type='range'] { width: 100%; margin: 14px 0 0; accent-color: var(--coral); height: 44px; cursor: pointer; }
 .calc-scale { display: flex; justify-content: space-between; font-size: 0.85rem; opacity: 0.7; }
 .calc-out { display: grid; gap: 0; }
 .calc-out div { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 16px 0; border-top: 1px solid var(--line-light); }
@@ -321,8 +321,8 @@ h2.display { font-size: clamp(2rem, 4.2vw, 3.2rem); }
 }
 .field input[aria-invalid='true'] { border-color: var(--bad); }
 .err { color: var(--bad); font-size: 0.9rem; margin-top: 6px; font-weight: 500; }
-.check { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 26px; }
-.check input { width: 22px; height: 22px; margin: 2px 0 0; accent-color: var(--navy-700); flex: none; }
+.check { display: flex; gap: 12px; align-items: center; min-height: 44px; margin-bottom: 20px; cursor: pointer; }
+.check input { width: 24px; height: 24px; margin: 0; accent-color: var(--navy-700); flex: none; }
 .order { border-top: 2px solid var(--ink); border-bottom: 1px solid var(--line); padding: 18px 0; margin-bottom: 22px; display: flex; justify-content: space-between; gap: 16px; align-items: baseline; }
 .order b { font-family: var(--serif); font-size: 1.6rem; font-weight: 900; }
 .order span small { display: block; color: var(--muted); font-size: 0.92rem; }
@@ -406,9 +406,14 @@ html[data-lang='es'] [lang='en'], html[data-lang='en'] [lang='es'] { display: no
   .join-side { position: static; max-width: 420px; }
   .steps, .deal { grid-template-columns: minmax(0, 1fr); gap: 28px; }
   .venue-list { grid-template-columns: minmax(0, 1fr); }
-  /* Keep the code on the first screen of a phone: that is what the venue needs. */
+  /* On a phone the code comes first and has to fit the first screen, which in Safari is only
+     about 550 to 660px tall once the browser's own bars are counted. The venue needs the code;
+     the card face is one scroll below it. */
+  .wallet { padding-top: 18px; }
   .wallet-card, .scan { max-width: 320px; }
-  .scan { padding: 16px; }
+  .scan { padding: 14px 16px; order: -1; }
+  .scan h2 { margin-bottom: 8px; }
+  .scan p { margin-top: 6px; }
   .wallet .wrap { gap: 22px; }
 }
 @media (max-width: 700px) {
