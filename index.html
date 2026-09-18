@@ -96,7 +96,6 @@
           <div>
             <dl class="calc-out">
               <div><dt>You save each week</dt><dd id="out-week"></dd></div>
-              <div><dt>The card has paid for itself after</dt><dd id="out-payback"></dd></div>
               <div><dt>In your pocket by the end of term, after the <span data-fill="price">€15</span></dt><dd id="out-net"></dd></div>
             </dl>
             <p class="calc-note" id="calc-note"></p>
@@ -195,9 +194,6 @@
         document.getElementById('spend-out').textContent = SSC.formatEuros(spend);
         document.getElementById('out-week').textContent = SSC.formatEuros(m.perWeek);
         slider.setAttribute('aria-valuetext', SSC.formatEuros(spend) + ' a week');
-        // With no full week left there is nothing to pay back in, so no number is shown.
-        document.getElementById('out-payback').textContent = weeks === 0 ? 'n/a'
-          : (m.weeksToPayBack === 1 ? '1 week' : m.weeksToPayBack + ' weeks');
         var net = document.getElementById('out-net');
         net.textContent = (m.net < 0 ? '−' : '') + SSC.formatEuros(Math.abs(m.net));
         net.classList.toggle('is-neg', m.net < 0);
