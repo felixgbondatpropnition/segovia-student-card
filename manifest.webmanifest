@@ -1,7 +1,7 @@
 {
   "name": "Segovia Student Card",
   "short_name": "Student Card",
-  "description": "15% off at partner bars, restaurants and shops in Segovia. Working prototype.",
+  "description": "10% off at partner bars, restaurants and shops in Segovia. Working prototype.",
   "start_url": "card/",
   "scope": "./",
   "display": "standalone",

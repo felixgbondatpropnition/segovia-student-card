@@ -27,24 +27,32 @@
     if (!c || !c.card) return null;
     try {
       var card = SSC.decodeCard(SSC.encodeCard(c.card));
-      return card ? { card: card, expired: SSC.isExpired(card.validTo, new Date()) } : null;
+      if (!card) return null;
+      return {
+        card: card,
+        email: typeof c.email === 'string' ? c.email : '',
+        expired: SSC.isExpired(card.validTo, new Date()),
+        // Issued by the earlier per-term version: still a real card, but not one on sale now.
+        outdated: card.termName !== config.plan.name
+      };
     } catch (e) {
       return null; // a hand-edited record with the wrong types inside
     }
   }
 
-  // Cards are only on sale while the term in config.js is still running.
-  function termOpen() {
-    return !SSC.isExpired(config.term.ends, new Date());
+  // The last day of a card issued right now.
+  function validToIfIssuedNow() {
+    return SSC.validToFor(SSC.madridDate(new Date()), config.plan.months);
   }
 
   function issueCard(name, email) {
-    if (!termOpen()) return null;
     var card = {
       id: SSC.newCardId(function (n) { return window.crypto.getRandomValues(new Uint8Array(n)); }),
       name: SSC.cleanName(name),
-      termName: config.term.name,
-      validTo: config.term.ends
+      // Still called termName so links from the first, per-term version keep decoding.
+      // It now carries the plan name.
+      termName: config.plan.name,
+      validTo: validToIfIssuedNow()
     };
     var ok = store.write(CARD_KEY, { card: card, email: String(email).trim(), issuedAt: new Date().toISOString() });
     store.remove(LOG_KEY);
@@ -71,9 +79,9 @@
     return store.write(LOG_KEY, getLog().slice(1));
   }
 
-  // The card carries the English term name. Show the Spanish one when it is this term's card.
-  function termNameEs(card) {
-    return card.termName === config.term.name && config.term.nameEs ? config.term.nameEs : card.termName;
+  // The card carries the English plan name. Show the Spanish one when it is the current plan.
+  function planNameEs(card) {
+    return card.termName === config.plan.name && config.plan.nameEs ? config.plan.nameEs : card.termName;
   }
 
   function verifyUrl(card) {
@@ -116,13 +124,13 @@
   function cardFace(card) {
     var name = card && card.name ? esc(card.name) : 'Your name here';
     var id = card && card.id ? esc(card.id) : 'SG-····-····';
-    var validTo = card && card.validTo ? card.validTo : config.term.ends;
+    var validTo = card && card.validTo ? card.validTo : validToIfIssuedNow();
     var shortDate = new Intl.DateTimeFormat('en-GB', { timeZone: 'UTC', day: '2-digit', month: 'short', year: 'numeric' })
       .format(new Date(validTo + 'T00:00:00Z'));
     return '<div class="card" data-tilt>' +
       archesSvg('#F9E795', 'card-arches') +
       '<div class="card-in">' +
-      '<div class="card-title">Segovia<br>Student Card<span>' + esc(card && card.termName ? card.termName : config.term.name) + '</span></div>' +
+      '<div class="card-title">Segovia<br>Student Card<span>' + esc(card && card.termName ? card.termName : config.plan.name) + '</span></div>' +
       '<div class="card-badge">' + config.discount + '%<small>OFF</small></div>' +
       '<div class="card-foot"><div style="min-width:0">' +
       '<div class="card-name' + (card && card.name ? '' : ' is-blank') + '" data-card-name>' + name + '</div>' +
@@ -200,9 +208,6 @@
       var values = {
         price: SSC.formatEuros(config.price),
         discount: config.discount + '%',
-        term: config.term.name,
-        termEnds: SSC.formatDate(config.term.ends),
-        termEndsEs: SSC.formatDate(config.term.ends, 'es-ES'),
         breakEven: SSC.formatEuros(SSC.breakEvenSpend(config.price, config.discount)),
         launchVenues: String(config.targets.launchVenues),
         venueTarget: String(config.targets.venues)
@@ -229,13 +234,13 @@
     config: config,
     siteRoot: siteRoot,
     getCard: getCard,
-    termOpen: termOpen,
+    validToIfIssuedNow: validToIfIssuedNow,
     issueCard: issueCard,
     removeCard: removeCard,
     getLog: getLog,
     addSaving: addSaving,
     removeLastSaving: removeLastSaving,
-    termNameEs: termNameEs,
+    planNameEs: planNameEs,
     verifyUrl: verifyUrl,
     cardFace: cardFace,
     enableTilt: enableTilt,

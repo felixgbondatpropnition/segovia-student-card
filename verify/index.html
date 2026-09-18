@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Source+Serif+4:ital,opsz,wght@0,8..60,700;0,8..60,900;1,8..60,400&display=swap" rel="stylesheet" crossorigin>
-  <link rel="stylesheet" href="../assets/style.css?v=1">
+  <link rel="stylesheet" href="../assets/style.css?v=2">
 </head>
 <body>
 
@@ -54,7 +54,7 @@
       <dl class="verify-facts" id="facts" hidden>
         <div><dt>Nombre <span class="en" lang="en">/ Name</span></dt><dd id="f-name"></dd></div>
         <div><dt>Tarjeta <span class="en" lang="en">/ Card</span></dt><dd class="mono" id="f-id"></dd></div>
-        <div><dt>Periodo <span class="en" lang="en">/ Term</span></dt><dd id="f-term"></dd></div>
+        <div><dt>Tipo <span class="en" lang="en">/ Type</span></dt><dd id="f-term"></dd></div>
         <div><dt id="f-until-label"></dt><dd id="f-until"></dd></div>
         <div><dt>Comprobada <span class="en" lang="en">/ Checked</span></dt><dd class="mono" id="f-now"></dd></div>
       </dl>
@@ -63,9 +63,9 @@
     <p class="verify-foot">Prototipo: las tarjetas todavía no tienen firma digital, así que esta pantalla no es una prueba real. <span class="en" lang="en">Prototype: cards are not signed yet, so this screen is not real proof.</span><br><a href="../">Segovia Student Card</a></p>
   </main>
 
-  <script src="../assets/config.js?v=1"></script>
-  <script src="../assets/core.js?v=1"></script>
-  <script src="../assets/app.js?v=1"></script>
+  <script src="../assets/config.js?v=2"></script>
+  <script src="../assets/core.js?v=2"></script>
+  <script src="../assets/app.js?v=2"></script>
   <script>
     (function () {
       var SSC = window.SSC;
@@ -93,7 +93,7 @@
         if (card) {
           $('f-name').textContent = card.name;
           $('f-id').textContent = card.id;
-          $('f-term').textContent = window.SSCApp.termNameEs(card);
+          $('f-term').textContent = window.SSCApp.planNameEs(card);
           $('f-until-label').innerHTML = result.status === 'expired'
             ? 'Caducó el <span class="en" lang="en">/ Expired on</span>'
             : 'Válida hasta <span class="en" lang="en">/ Valid to</span>';

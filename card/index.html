@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Source+Serif+4:ital,opsz,wght@0,8..60,700;0,8..60,900;1,8..60,400&display=swap" rel="stylesheet" crossorigin>
-  <link rel="stylesheet" href="../assets/style.css?v=1">
+  <link rel="stylesheet" href="../assets/style.css?v=2">
 </head>
 <body>
   <div class="proto" data-proto>Prototype. No payment is taken.</div>
@@ -48,7 +48,7 @@
             <p class="kicker" id="ready" style="margin-bottom:16px;text-align:center" hidden>Your card is ready.</p>
             <div id="face"></div>
             <p class="status-line" id="status"></p>
-            <p class="status-line" id="renew" hidden><a class="btn btn-primary btn-small" href="../join/">Get a card for <span data-fill="term"></span></a></p>
+            <p class="status-line" id="renew" hidden><a class="btn btn-primary btn-small" href="../join/" id="renew-link">Renew for another month</a></p>
           </div>
           <div class="scan">
             <h2>Show this at the till</h2>
@@ -61,7 +61,7 @@
       <section class="section on-cream">
         <div class="wrap saved">
           <div>
-            <h2 class="display">Saved so far</h2>
+            <h2 class="display" id="saved-title">Saved this month</h2>
             <div class="saved-total" id="total"></div>
             <div class="meter" role="img" id="meter" aria-label=""><i id="meter-fill" style="width:0"></i></div>
             <p id="progress"></p>
@@ -110,10 +110,10 @@
     </div>
   </footer>
 
-  <script src="../assets/config.js?v=1"></script>
-  <script src="../assets/core.js?v=1"></script>
-  <script src="../assets/app.js?v=1"></script>
-  <script src="../vendor/qrcode.js?v=1"></script>
+  <script src="../assets/config.js?v=2"></script>
+  <script src="../assets/core.js?v=2"></script>
+  <script src="../assets/app.js?v=2"></script>
+  <script src="../vendor/qrcode.js?v=2"></script>
   <script>
     (function () {
       var App = window.SSCApp, SSC = window.SSC, config = App.config;
@@ -139,8 +139,14 @@
           ? 'This card expired on ' + SSC.formatDate(card.validTo) + '. Venues will see it as expired.'
           : 'Valid until the end of ' + SSC.formatDate(card.validTo) + '.';
         $('status').classList.toggle('is-expired', expired);
-        // Renewal only shows when there is a term on sale to renew into.
-        $('renew').hidden = !(expired && App.termOpen());
+        var outdated = mine.outdated && !expired;
+        if (outdated) $('status').textContent += ' It is from the earlier, per-term version of this prototype.';
+        $('renew-link').textContent = outdated ? 'Swap it for the monthly card' : 'Renew for another month';
+        $('renew').hidden = !(expired || outdated);
+        // A dead card saves nothing more: keep its total, stop the counting.
+        $('saved-title').textContent = expired ? 'Saved with this card' : 'Saved this month';
+        $('progress').hidden = expired;
+        $('bill-form').hidden = expired;
       }
 
       renderStatus();

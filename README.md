@@ -1,6 +1,6 @@
 # Segovia Student Card
 
-A working prototype of the card from the pitch: €10 a term, 15% off at partner bars,
+A working prototype of the card from the pitch: €5 a month, 10% off at partner bars,
 restaurants and shops in Segovia.
 
 It is a static site. There is no server, no database and no build step, which matches the
@@ -30,13 +30,13 @@ pitch ("zero product to build") and lets it run free on GitHub Pages.
 
 ## Changing things
 
-Everything the team will want to change is in `assets/config.js`: price, discount, term
-dates, targets, venues, and the WhatsApp link venues use to get in touch. The exception is
+Everything the team will want to change is in `assets/config.js`: price, discount, how many
+months a card runs, targets, venues, and the WhatsApp link venues use to get in touch. The exception is
 the link-preview text in each page's `<head>` and in `manifest.webmanifest`, which repeats
 the price and the discount as plain text. While
 `venueContactUrl` is empty the site shows no contact button.
 
-After changing any file in `assets/` or `vendor/`, bump the version: the `?v=1` on the asset
+After changing any file in `assets/` or `vendor/`, bump the version: the `?v=` number on the asset
 links in every page and `V` in `sw.js` must move together (a test checks they match). That
 is what stops a phone from pairing a new page with an old saved script.
 

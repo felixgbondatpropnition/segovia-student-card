@@ -1,13 +1,15 @@
-// Everything the team will want to change lives here: price, discount, term, targets, venues
+// Everything the team will want to change lives here: price, discount, plan, targets, venues
 // and the contact link. The one exception is the link-preview text in each page's <head> and
 // in manifest.webmanifest, which is plain HTML and repeats the price and the discount.
 (function (root) {
   var config = {
-    price: 10, // euros per term
-    discount: 15, // per cent off at partner venues
+    price: 5, // euros per month
+    discount: 10, // per cent off at partner venues
 
-    // The card runs for one term and expires at the end of `ends` (Madrid time).
-    term: { name: 'Autumn term 2026', nameEs: 'Trimestre de otoño 2026', ends: '2026-12-18' },
+    // The card is bought by the month: it runs for `months` from the day it is issued and then
+    // expires until it is renewed. `name` is printed on the card. The pages say "a month" and
+    // "one month" in plain words, so changing `months` means rewording them too.
+    plan: { name: 'Monthly card', nameEs: 'Tarjeta mensual', months: 1 },
 
     // Targets from the pitch. Shown as targets, never as achievements.
     targets: { launchVenues: 10, venues: 30 },
