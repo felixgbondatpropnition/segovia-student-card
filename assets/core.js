@@ -16,6 +16,17 @@
     return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(raw || '').trim());
   }
 
+  // True when the address is at exactly one of the allowed domains. x@evilstudent.ie.edu and
+  // x@student.ie.edu.evil.com both fail.
+  function emailAllowed(raw, domains) {
+    var email = String(raw || '').trim().toLowerCase();
+    if (!looksLikeEmail(email)) return false;
+    var at = email.lastIndexOf('@');
+    if (!/^[a-z0-9._%+-]+$/.test(email.slice(0, at))) return false; // plain mailbox names only
+    var domain = email.slice(at + 1);
+    return (domains || []).some(function (d) { return domain === String(d).toLowerCase(); });
+  }
+
   // randomBytes: function (n) -> array-like of n bytes. Injected so tests are repeatable.
   function newCardId(randomBytes) {
     var bytes = randomBytes(8);
@@ -168,6 +179,7 @@
     MAX_NAME: MAX_NAME,
     cleanName: cleanName,
     looksLikeEmail: looksLikeEmail,
+    emailAllowed: emailAllowed,
     newCardId: newCardId,
     checksum: checksum,
     encodeCard: encodeCard,

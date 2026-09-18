@@ -47,7 +47,7 @@
   }
 
   function issueCard(name, email) {
-    if (!termOpen()) return null;
+    if (!termOpen() || !SSC.emailAllowed(email, config.emailDomains)) return null;
     var card = {
       id: SSC.newCardId(function (n) { return window.crypto.getRandomValues(new Uint8Array(n)); }),
       name: SSC.cleanName(name),

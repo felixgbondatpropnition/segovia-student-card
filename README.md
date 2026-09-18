@@ -8,7 +8,7 @@ pitch ("zero product to build") and lets it run free on GitHub Pages.
 
 ## What works
 
-- **Get the card** (`join/`): name, university email, a payment step that is switched off,
+- **Get the card** (`join/`): IE students only. Name, an IE student email (`@student.ie.edu`), a payment step that is switched off,
   then a card issued to the phone.
 - **My card** (`card/`): the card, a QR code, and a running total of what the student has
   saved. Opens with no signal once it has been
@@ -26,6 +26,9 @@ pitch ("zero product to build") and lets it run free on GitHub Pages.
   checksum that catches a mangled link. Anyone who reads the code could forge one, and a
   screenshot of a real card checks out the same as the card itself. A live
   version issues and signs cards on a server, and checks the student's email first.
+- **The IE email is not confirmed.** The prototype checks the address ends `@student.ie.edu`.
+  It cannot prove the address belongs to the person: that needs a confirmation email, which
+  needs a server.
 - **The card lives in one browser.** Clear the browser data and it is gone.
 
 ## Changing things

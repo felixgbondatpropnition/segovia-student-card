@@ -109,6 +109,15 @@ test('email check', () => {
   for (const bad of ['', 'a@b', 'a b@c.com', '@c.com', 'a@.c']) assert.ok(!SSC.looksLikeEmail(bad), bad);
 });
 
+test('only IE student addresses are allowed', () => {
+  const d = config.emailDomains;
+  assert.deepEqual(d, ['student.ie.edu']);
+  assert.equal(SSC.emailAllowed('x@student.ie.edu', undefined), false); // a missing list refuses everyone
+  for (const ok of ['fbond@student.ie.edu', '  A.B-c@Student.IE.edu ', 'a.name2025@student.ie.edu', 'a+tag@student.ie.edu']) assert.ok(SSC.emailAllowed(ok, d), ok);
+  for (const bad of ['', 'x@gmail.com', 'x@ie.edu', 'x@evilstudent.ie.edu', 'x@student.ie.edu.evil.com', 'x@sub.student.ie.edu',
+    '@student.ie.edu', 'x y@student.ie.edu', '<script>@student.ie.edu', 'x\u200b@student.ie.edu', 'mailto:x@student.ie.edu', 'student.ie.edu', 'x@student.ie.edu@gmail.com', null]) assert.ok(!SSC.emailAllowed(bad, d), String(bad));
+});
+
 test('config is sane and the term name fits in a card', () => {
   assert.ok(config.price > 0 && config.discount > 0 && config.discount < 100);
   assert.notEqual(SSC.decodeCard(SSC.encodeCard({ ...card, termName: config.term.name, validTo: config.term.ends })), null);

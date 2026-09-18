@@ -164,7 +164,7 @@
         $('progress').textContent = gap > 0
           ? 'Save ' + SSC.formatEuros(gap) + ' more and the card has paid for itself.'
           : (gap === 0 ? 'The card has paid for itself.' : 'The card has paid for itself and you are ' + SSC.formatEuros(-gap) + ' ahead.');
-        $('undo').hidden = log.length === 0;
+        $('undo').hidden = log.length === 0 || SSC.isExpired(card.validTo, new Date());
         $('log').innerHTML = log.slice(0, 8).map(function (e) {
           var when = new Date(e.at);
           var day = isNaN(when) ? '' : new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short' }).format(when);

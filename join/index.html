@@ -61,16 +61,16 @@
                 <p class="err" id="name-err" role="alert" hidden>Enter your first name and surname.</p>
               </div>
               <div class="field">
-                <label for="email">University email</label>
-                <input id="email" type="email" autocomplete="email" inputmode="email" required aria-describedby="email-hint email-err">
-                <p class="err" id="email-err" role="alert" hidden>That does not look like an email address.</p>
-                <p class="hint" id="email-hint">The live version will send a link here to confirm you are a student. The prototype sends nothing and keeps the address on this phone only.</p>
+                <label for="email">IE student email</label>
+                <input id="email" type="email" autocomplete="email" inputmode="email" placeholder="you@student.ie.edu" required aria-describedby="email-hint email-err">
+                <p class="err" id="email-err" role="alert" hidden>The card is for IE students only. Use your IE email, ending @student.ie.edu.</p>
+                <p class="hint" id="email-hint">The card is for IE University students only. The live version will send a link to this address to confirm it is yours. The prototype only checks that the address ends @student.ie.edu, sends nothing, and keeps it on this phone.</p>
               </div>
               <label class="check">
                 <input id="student" type="checkbox" required aria-describedby="student-err">
-                <span>I am a student living in Segovia.</span>
+                <span>I am an IE University student in Segovia.</span>
               </label>
-              <p class="err" id="student-err" role="alert" hidden style="margin:-14px 0 22px">The card is for students only.</p>
+              <p class="err" id="student-err" role="alert" hidden style="margin:-14px 0 22px">The card is for IE University students only.</p>
               <button class="btn btn-primary" type="submit">Continue</button>
             </form>
 
@@ -181,7 +181,7 @@
       $('step-1').addEventListener('submit', function (ev) {
         ev.preventDefault();
         var badName = setError($('name'), 'name-err', !nameOk(SSC.cleanName($('name').value)));
-        var badEmail = setError($('email'), 'email-err', !SSC.looksLikeEmail($('email').value));
+        var badEmail = setError($('email'), 'email-err', !SSC.emailAllowed($('email').value, App.config.emailDomains));
         var badStudent = setError($('student'), 'student-err', !$('student').checked);
         if (badName) $('name').focus();
         else if (badEmail) $('email').focus();
@@ -194,6 +194,10 @@
       $('issue').addEventListener('click', function () {
         // The term can end while this step is open. Say that, not "storage is blocked".
         if (!App.termOpen()) { $('join').hidden = true; $('closed').hidden = false; return; }
+        // Checked again here so a refusal is never blamed on storage.
+        if (!SSC.emailAllowed($('email').value, App.config.emailDomains)) {
+          showStep(1); setError($('email'), 'email-err', true); $('email').focus(); return;
+        }
         var card = App.issueCard($('name').value, $('email').value);
         if (!card) { $('issue-err').hidden = false; return; }
         window.location.href = new URL('card/?new=1', App.siteRoot).href;

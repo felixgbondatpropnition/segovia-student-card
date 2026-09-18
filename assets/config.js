@@ -9,6 +9,11 @@
     // The card runs for one term and expires at the end of `ends` (Madrid time).
     term: { name: 'Autumn term 2026', nameEs: 'Trimestre de otoño 2026', ends: '2026-12-18' },
 
+    // The card is for IE University students only. An email must end in @ one of these to get a
+    // card. The prototype can only check the shape of the address: proving it belongs to the
+    // person needs a confirmation email, which needs a server.
+    emailDomains: ['student.ie.edu'],
+
     // Targets from the pitch. Shown as targets, never as achievements.
     targets: { launchVenues: 10, venues: 30 },
 
