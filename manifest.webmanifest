@@ -1,0 +1,15 @@
+{
+  "name": "Segovia Student Card",
+  "short_name": "Student Card",
+  "description": "15% off at partner bars, restaurants and shops in Segovia. Working prototype.",
+  "start_url": "card/",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#1B2452",
+  "theme_color": "#1B2452",
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

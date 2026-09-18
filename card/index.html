@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My card · Segovia Student Card</title>
+  <meta name="description" content="Your Segovia Student Card.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#1B2452">
+  <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../assets/icon-180.png">
+  <link rel="manifest" href="../manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Source+Serif+4:ital,opsz,wght@0,8..60,700;0,8..60,900;1,8..60,400&display=swap" rel="stylesheet" crossorigin>
+  <link rel="stylesheet" href="../assets/style.css?v=1">
+</head>
+<body>
+  <div class="proto" data-proto>Prototype. No payment is taken.</div>
+  <header class="site-head">
+    <div class="wrap">
+      <a class="brand" href="../" aria-label="Segovia Student Card, home">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#F96167"/><path fill="#1B2452" d="M9 25V15a7 7 0 0 1 14 0v10h-4V15a3 3 0 0 0-6 0v10z"/></svg>
+        <span>Segovia<br>Student Card</span>
+      </a>
+      <nav class="nav" aria-label="Main">
+        <a class="nav-link" href="../venues/">Venues</a>
+        <a class="nav-link hide-s" href="../for-venues/">For venues</a>
+        <a class="btn btn-primary btn-small" data-cta href="../join/">Get the card</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="section on-cream" id="no-card" hidden>
+      <div class="wrap">
+        <h1 class="display" style="font-size:clamp(2.2rem,5vw,3.6rem)">No card on this phone yet</h1>
+        <p class="lede" style="margin:18px 0 28px;max-width:32em">Your card is kept on the phone you got it with. If that was another phone or browser, open this page there.</p>
+        <a class="btn btn-primary" href="../join/">Get the card</a>
+      </div>
+    </section>
+
+    <div id="has-card" hidden>
+      <section class="wallet on-navy">
+        <div class="wrap">
+          <div class="wallet-card">
+            <h1 class="sr-only">My card</h1>
+            <p class="kicker" id="ready" style="margin-bottom:16px;text-align:center" hidden>Your card is ready.</p>
+            <div id="face"></div>
+            <p class="status-line" id="status"></p>
+            <p class="status-line" id="renew" hidden><a class="btn btn-primary btn-small" href="../join/">Get a card for <span data-fill="term"></span></a></p>
+          </div>
+          <div class="scan">
+            <h2>Show this at the till</h2>
+            <div class="qr" id="qr"></div>
+            <p>The venue points any phone camera at this code.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section on-cream">
+        <div class="wrap saved">
+          <div>
+            <h2 class="display">Saved so far</h2>
+            <div class="saved-total" id="total"></div>
+            <div class="meter" role="img" id="meter" aria-label=""><i id="meter-fill" style="width:0"></i></div>
+            <p id="progress"></p>
+          </div>
+          <div>
+            <form class="saved-form" id="bill-form" novalidate onsubmit="return false">
+              <div class="field">
+                <label for="bill">Add a bill, before the discount</label>
+                <input id="bill" type="text" inputmode="decimal" autocomplete="off" placeholder="0.00" aria-describedby="bill-err">
+              </div>
+              <button class="btn btn-navy" type="submit">Add</button>
+            </form>
+            <p class="err" id="bill-err" role="alert" hidden>Enter the bill in euros, for example 24.50.</p>
+            <p class="err" id="save-err" role="alert" hidden>This browser is blocking storage, so the bill could not be saved.</p>
+            <ul class="log" id="log" aria-label="Bills you have added"></ul>
+            <p style="margin-top:10px"><button class="linkish" type="button" id="undo" hidden>Remove the last bill</button></p>
+            <p class="hint" style="font-size:.9rem;color:var(--muted);margin-top:14px">You add these yourself, so the total is only as good as what you enter. It stays on this phone.</p>
+
+            <div class="danger-zone">
+              <p>Tip: bookmark this page so your card is one tap away. Once opened, it loads without signal.</p>
+              <p style="margin-top:12px"><button class="linkish" type="button" id="remove">Remove the card from this phone</button></p>
+              <div class="confirm" id="confirm" hidden>
+                <span>This deletes the card and your saved total. Sure?</span>
+                <button class="btn btn-small btn-navy" type="button" id="remove-yes">Remove it</button>
+                <button class="btn btn-small btn-ghost" type="button" id="remove-no">Keep it</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-foot">
+    <div class="wrap">
+      <div>
+        <a class="brand" href="../"><span>Segovia Student Card</span></a>
+        <p>A student project from Segovia. Working prototype: no payment is taken. Not affiliated with IE University or with any venue.</p>
+      </div>
+      <nav aria-label="Footer">
+        <a href="../venues/">Venues</a>
+        <a href="../for-venues/">For venues</a>
+        <a href="../join/">Get the card</a>
+        <a href="../verify/">Check a card</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="../assets/config.js?v=1"></script>
+  <script src="../assets/core.js?v=1"></script>
+  <script src="../assets/app.js?v=1"></script>
+  <script src="../vendor/qrcode.js?v=1"></script>
+  <script>
+    (function () {
+      var App = window.SSCApp, SSC = window.SSC, config = App.config;
+      var $ = function (id) { return document.getElementById(id); };
+
+      var mine = App.getCard();
+      if (!mine) { $('no-card').hidden = false; return; }
+      $('has-card').hidden = false;
+
+      var card = mine.card;
+      $('face').innerHTML = App.cardFace(card);
+      $('qr').innerHTML = App.qrSvg(App.verifyUrl(card));
+      App.enableTilt();
+
+      if (/[?&]new=1\b/.test(location.search)) {
+        $('ready').hidden = false;
+        history.replaceState(null, '', location.pathname);
+      }
+
+      function renderStatus() {
+        var expired = SSC.isExpired(card.validTo, new Date());
+        $('status').textContent = expired
+          ? 'This card expired on ' + SSC.formatDate(card.validTo) + '. Venues will see it as expired.'
+          : 'Valid until the end of ' + SSC.formatDate(card.validTo) + '.';
+        $('status').classList.toggle('is-expired', expired);
+        // Renewal only shows when there is a term on sale to renew into.
+        $('renew').hidden = !(expired && App.termOpen());
+      }
+
+      renderStatus();
+      setInterval(renderStatus, 60000);
+
+      function renderSavings() {
+        var log = App.getLog();
+        var cents = log.reduce(function (sum, e) { return sum + Math.round(e.saved * 100); }, 0);
+        var saved = cents / 100;
+        $('total').textContent = SSC.formatEuros(saved);
+        var pct = Math.min(100, Math.round((saved / config.price) * 100));
+        $('meter-fill').style.width = pct + '%';
+        $('meter').setAttribute('aria-label', pct + '% of the way to covering the price of the card');
+        var gap = Math.round((config.price - saved) * 100) / 100;
+        $('progress').textContent = gap > 0
+          ? 'Save ' + SSC.formatEuros(gap) + ' more and the card has paid for itself.'
+          : (gap === 0 ? 'The card has paid for itself.' : 'The card has paid for itself and you are ' + SSC.formatEuros(-gap) + ' ahead.');
+        $('undo').hidden = log.length === 0;
+        $('log').innerHTML = log.slice(0, 8).map(function (e) {
+          var when = new Date(e.at);
+          var day = isNaN(when) ? '' : new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short' }).format(when);
+          return '<li><span>' + App.esc(day) + ' · bill of ' + App.esc(SSC.formatEuros(e.bill)) + '</span><span>saved ' + App.esc(SSC.formatEuros(e.saved)) + '</span></li>';
+        }).join('');
+      }
+      renderSavings();
+
+      $('undo').addEventListener('click', function () {
+        App.removeLastSaving();
+        renderSavings();
+        $('bill').focus();
+      });
+
+      $('bill-form').addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        // A text field, read strictly: in Spain the decimal mark is a comma, and a number field
+        // in an English browser silently turns 24,50 into 2450.
+        var raw = $('bill').value.trim();
+        var shaped = /^\d{1,5}([.,]\d{1,2})?$/.test(raw);
+        var bill = shaped ? Number(raw.replace(',', '.')) : NaN;
+        var bad = !shaped || bill < 0.01 || bill > 10000;
+        $('bill-err').hidden = !bad;
+        $('bill').setAttribute('aria-invalid', bad ? 'true' : 'false');
+        if (bad) { $('bill').focus(); return; }
+        var stored = App.addSaving(bill);
+        $('save-err').hidden = stored;
+        if (stored) $('bill').value = '';
+        renderSavings();
+      });
+
+      $('remove').addEventListener('click', function () { $('confirm').hidden = false; $('remove-no').focus(); });
+      $('remove-no').addEventListener('click', function () { $('confirm').hidden = true; $('remove').focus(); });
+      $('remove-yes').addEventListener('click', function () {
+        App.removeCard();
+        window.location.href = App.siteRoot.href;
+      });
+    })();
+  </script>
+</body>
+</html>

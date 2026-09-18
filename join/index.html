@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Get the card · Segovia Student Card</title>
+  <meta name="description" content="Get your Segovia Student Card. Working prototype: no payment is taken.">
+  <meta name="theme-color" content="#1B2452">
+  <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../assets/icon-180.png">
+  <link rel="manifest" href="../manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Source+Serif+4:ital,opsz,wght@0,8..60,700;0,8..60,900;1,8..60,400&display=swap" rel="stylesheet" crossorigin>
+  <link rel="stylesheet" href="../assets/style.css?v=1">
+</head>
+<body>
+  <div class="proto" data-proto>Prototype. No payment is taken.</div>
+  <header class="site-head">
+    <div class="wrap">
+      <a class="brand" href="../" aria-label="Segovia Student Card, home">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#F96167"/><path fill="#1B2452" d="M9 25V15a7 7 0 0 1 14 0v10h-4V15a3 3 0 0 0-6 0v10z"/></svg>
+        <span>Segovia<br>Student Card</span>
+      </a>
+      <nav class="nav" aria-label="Main">
+        <a class="nav-link" href="../venues/">Venues</a>
+        <a class="nav-link hide-s" href="../for-venues/">For venues</a>
+        <a class="btn btn-primary btn-small" data-cta href="../join/">Get the card</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="section on-cream">
+      <div class="wrap">
+        <div id="have-card" hidden>
+          <h1 class="display" style="font-size:clamp(2.2rem,5vw,3.6rem)">You already have a card</h1>
+          <p class="lede" style="margin:18px 0 28px">This phone holds a card for <b id="have-name"></b>.</p>
+          <a class="btn btn-primary" href="../card/">Open my card</a>
+        </div>
+
+        <div id="closed" hidden>
+          <h1 class="display" style="font-size:clamp(2.2rem,5vw,3.6rem)">This term has ended</h1>
+          <p class="lede" style="margin:18px 0 0;max-width:32em">Cards for <span data-fill="term"></span> ran until <span data-fill="termEnds"></span>. Cards for the next term are not on sale yet.</p>
+        </div>
+
+        <div class="join" id="join">
+          <div>
+            <h1 class="display" style="font-size:clamp(2.2rem,5vw,3.6rem);margin-bottom:28px">Get the card</h1>
+            <ol class="stepper" id="stepper">
+              <li aria-current="step"><i>1</i>Your details</li>
+              <li><i>2</i>Payment</li>
+              <li><i>3</i>Your card</li>
+            </ol>
+
+            <form id="step-1" novalidate onsubmit="return false">
+              <div class="field">
+                <label for="name">Name, as it appears on your student ID</label>
+                <input id="name" type="text" autocomplete="name" maxlength="40" required aria-describedby="name-err">
+                <p class="err" id="name-err" role="alert" hidden>Enter your first name and surname.</p>
+              </div>
+              <div class="field">
+                <label for="email">University email</label>
+                <input id="email" type="email" autocomplete="email" inputmode="email" required aria-describedby="email-hint email-err">
+                <p class="err" id="email-err" role="alert" hidden>That does not look like an email address.</p>
+                <p class="hint" id="email-hint">The live version will send a link here to confirm you are a student. The prototype sends nothing and keeps the address on this phone only.</p>
+              </div>
+              <label class="check">
+                <input id="student" type="checkbox" required aria-describedby="student-err">
+                <span>I am a student living in Segovia.</span>
+              </label>
+              <p class="err" id="student-err" role="alert" hidden style="margin:-14px 0 22px">The card is for students only.</p>
+              <button class="btn btn-primary" type="submit">Continue</button>
+            </form>
+
+            <div id="step-2" hidden>
+              <h2 class="step-title" tabindex="-1" id="step-2-title">Payment</h2>
+              <div class="order">
+                <span>Segovia Student Card<small data-fill="term"></small></span>
+                <b data-fill="price"></b>
+              </div>
+              <p class="notice">Payment is switched off in this prototype. Nothing is charged and you will not be asked for card details. In the live version this is where you pay <span data-fill="price"></span>.</p>
+              <p class="err" id="issue-err" role="alert" hidden style="margin-bottom:18px">This browser is blocking storage, so the card cannot be saved. Leave private browsing and try again.</p>
+              <div class="btn-row">
+                <button class="btn btn-primary" type="button" id="issue">Issue my card</button>
+                <button class="btn btn-ghost" type="button" id="back">Back</button>
+              </div>
+            </div>
+          </div>
+
+          <aside class="join-side" aria-label="Card preview">
+            <div id="preview"></div>
+            <p class="card-caption">This is how your card will look.</p>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-foot">
+    <div class="wrap">
+      <div>
+        <a class="brand" href="../"><span>Segovia Student Card</span></a>
+        <p>A student project from Segovia. Working prototype: no payment is taken. Not affiliated with IE University or with any venue.</p>
+      </div>
+      <nav aria-label="Footer">
+        <a href="../venues/">Venues</a>
+        <a href="../for-venues/">For venues</a>
+        <a href="../join/">Get the card</a>
+        <a href="../verify/">Check a card</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="../assets/config.js?v=1"></script>
+  <script src="../assets/core.js?v=1"></script>
+  <script src="../assets/app.js?v=1"></script>
+  <script>
+    (function () {
+      var App = window.SSCApp, SSC = window.SSC;
+      var $ = function (id) { return document.getElementById(id); };
+
+      if (!App.termOpen()) {
+        $('join').hidden = true;
+        $('closed').hidden = false;
+        return;
+      }
+
+      // An expired card does not block a new one: that is how a student renews for the next term.
+      var mine = App.getCard();
+      if (mine && !mine.expired) {
+        $('join').hidden = true;
+        $('have-card').hidden = false;
+        $('have-name').textContent = mine.card.name;
+        return;
+      }
+
+      $('preview').innerHTML = App.cardFace(null);
+      App.enableTilt();
+      var previewName = document.querySelector('[data-card-name]');
+
+      $('name').addEventListener('input', function () {
+        var n = SSC.cleanName($('name').value);
+        previewName.textContent = n || 'Your name here';
+        previewName.classList.toggle('is-blank', !n);
+      });
+
+      function setError(input, errId, bad) {
+        $(errId).hidden = !bad;
+        if (input) input.setAttribute('aria-invalid', bad ? 'true' : 'false');
+        return bad;
+      }
+
+      // Two words, each with a letter in it: a first name and a surname.
+      function nameOk(n) {
+        var words = n.split(' ').filter(function (w) { return /\p{L}/u.test(w); });
+        return words.length >= 2;
+      }
+
+      function showStep(n) {
+        $('step-1').hidden = n !== 1;
+        $('step-2').hidden = n !== 2;
+        Array.prototype.forEach.call($('stepper').children, function (li, i) {
+          li.classList.toggle('is-done', i + 1 < n);
+          if (i + 1 === n) li.setAttribute('aria-current', 'step'); else li.removeAttribute('aria-current');
+        });
+        if (n === 2) $('step-2-title').focus();
+      }
+
+      $('step-1').addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        var badName = setError($('name'), 'name-err', !nameOk(SSC.cleanName($('name').value)));
+        var badEmail = setError($('email'), 'email-err', !SSC.looksLikeEmail($('email').value));
+        var badStudent = setError($('student'), 'student-err', !$('student').checked);
+        if (badName) $('name').focus();
+        else if (badEmail) $('email').focus();
+        else if (badStudent) $('student').focus();
+        else showStep(2);
+      });
+
+      $('back').addEventListener('click', function () { showStep(1); $('name').focus(); });
+
+      $('issue').addEventListener('click', function () {
+        // The term can end while this step is open. Say that, not "storage is blocked".
+        if (!App.termOpen()) { $('join').hidden = true; $('closed').hidden = false; return; }
+        var card = App.issueCard($('name').value, $('email').value);
+        if (!card) { $('issue-err').hidden = false; return; }
+        window.location.href = new URL('card/?new=1', App.siteRoot).href;
+      });
+    })();
+  </script>
+</body>
+</html>

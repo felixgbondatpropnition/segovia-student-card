@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="es-ES">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Comprobar una tarjeta · Segovia Student Card</title>
+  <meta name="description" content="Comprueba una Segovia Student Card. Check a Segovia Student Card.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#1B2452">
+  <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../assets/icon-180.png">
+  <link rel="manifest" href="../manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Source+Serif+4:ital,opsz,wght@0,8..60,700;0,8..60,900;1,8..60,400&display=swap" rel="stylesheet" crossorigin>
+  <link rel="stylesheet" href="../assets/style.css?v=1">
+</head>
+<body>
+
+  <main class="verify" id="verify" data-status="none">
+    <div class="verify-main">
+      <!-- valid -->
+      <div id="s-valid" hidden>
+        <svg class="verify-icon" viewBox="0 0 108 108" aria-hidden="true"><circle cx="54" cy="54" r="50" fill="none" stroke="#fff" stroke-width="6"/><path d="M32 56l15 15 30-34" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <h1>Válida</h1>
+        <p class="verify-sub en" lang="en">Valid card</p>
+        <p><span class="verify-offer" style="display:inline-block"><span data-fill="discount"></span> de descuento</span></p>
+      </div>
+      <!-- expired -->
+      <div id="s-expired" hidden>
+        <svg class="verify-icon" viewBox="0 0 108 108" aria-hidden="true"><circle cx="54" cy="54" r="50" fill="none" stroke="#fff" stroke-width="6"/><path d="M36 36l36 36M72 36L36 72" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round"/></svg>
+        <h1>Caducada</h1>
+        <p class="verify-sub en" lang="en">Expired card</p>
+        <p class="verify-ask">Esta tarjeta ya no es válida. Sin descuento.<br><span class="en" lang="en">This card has run out. No discount.</span></p>
+      </div>
+      <!-- unreadable -->
+      <div id="s-unreadable" hidden>
+        <svg class="verify-icon" viewBox="0 0 108 108" aria-hidden="true"><circle cx="54" cy="54" r="50" fill="none" stroke="#fff" stroke-width="6"/><path d="M36 36l36 36M72 36L36 72" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round"/></svg>
+        <h1>No válida</h1>
+        <p class="verify-sub en" lang="en">Not a valid card</p>
+        <p class="verify-ask">Este código no es una Segovia Student Card. Sin descuento.<br><span class="en" lang="en">This code is not a Segovia Student Card. No discount.</span></p>
+      </div>
+      <!-- nothing scanned -->
+      <div id="s-none" hidden>
+        <h1 style="font-size:clamp(2.2rem,8vw,3.6rem)">Comprobar una tarjeta</h1>
+        <p class="verify-sub en" lang="en">Check a card</p>
+        <ol class="verify-how">
+          <li>Pide al estudiante que abra su tarjeta.<br><span class="en" lang="en">Ask the student to open their card.</span></li>
+          <li>Apunta la cámara de tu móvil al código QR y pulsa el enlace.<br><span class="en" lang="en">Point your phone camera at the QR code and tap the link.</span></li>
+          <li>Verde: aplica el descuento. Rojo: sin descuento.<br><span class="en" lang="en">Green: take the discount off. Red: no discount.</span></li>
+        </ol>
+      </div>
+
+      <dl class="verify-facts" id="facts" hidden>
+        <div><dt>Nombre <span class="en" lang="en">/ Name</span></dt><dd id="f-name"></dd></div>
+        <div><dt>Tarjeta <span class="en" lang="en">/ Card</span></dt><dd class="mono" id="f-id"></dd></div>
+        <div><dt>Periodo <span class="en" lang="en">/ Term</span></dt><dd id="f-term"></dd></div>
+        <div><dt id="f-until-label"></dt><dd id="f-until"></dd></div>
+        <div><dt>Comprobada <span class="en" lang="en">/ Checked</span></dt><dd class="mono" id="f-now"></dd></div>
+      </dl>
+      <p class="verify-ask" id="ask" hidden>Pide el carné de estudiante: el nombre debe coincidir.<br><span class="en" lang="en">Ask for their student ID. The name has to match.</span></p>
+    </div>
+    <p class="verify-foot">Prototipo: las tarjetas todavía no tienen firma digital, así que esta pantalla no es una prueba real. <span class="en" lang="en">Prototype: cards are not signed yet, so this screen is not real proof.</span><br><a href="../">Segovia Student Card</a></p>
+  </main>
+
+  <script src="../assets/config.js?v=1"></script>
+  <script src="../assets/core.js?v=1"></script>
+  <script src="../assets/app.js?v=1"></script>
+  <script>
+    (function () {
+      var SSC = window.SSC;
+      var $ = function (id) { return document.getElementById(id); };
+      var states = ['valid', 'expired', 'unreadable', 'none'];
+
+      var shownStatus = null;
+
+      function check(now) {
+        var payload = location.hash.replace(/^#/, '');
+        return payload ? SSC.checkPayload(payload, now) : { status: 'none', card: null };
+      }
+
+      function render() {
+        var now = new Date();
+        var result = check(now);
+        shownStatus = result.status;
+
+        $('verify').setAttribute('data-status', result.status);
+        states.forEach(function (s) { $('s-' + s).hidden = s !== result.status; });
+
+        var card = result.card;
+        $('facts').hidden = !card;
+        $('ask').hidden = result.status !== 'valid';
+        if (card) {
+          $('f-name').textContent = card.name;
+          $('f-id').textContent = card.id;
+          $('f-term').textContent = window.SSCApp.termNameEs(card);
+          $('f-until-label').innerHTML = result.status === 'expired'
+            ? 'Caducó el <span class="en" lang="en">/ Expired on</span>'
+            : 'Válida hasta <span class="en" lang="en">/ Valid to</span>';
+          $('f-until').textContent = SSC.formatDate(card.validTo, 'es-ES');
+          $('f-now').textContent = now.toLocaleTimeString('es-ES', { hour12: false });
+        }
+        document.title = { valid: 'Válida', expired: 'Caducada', unreadable: 'No válida', none: 'Comprobar una tarjeta' }[result.status] + ' · Segovia Student Card';
+      }
+
+      render();
+      window.addEventListener('hashchange', render);
+      // Each second only the clock moves, so a selected name or number stays selected. The whole
+      // page is redrawn only if the answer changes, as when it is left open over midnight.
+      setInterval(function () {
+        var now = new Date();
+        if (check(now).status !== shownStatus) render();
+        else if (!$('facts').hidden) $('f-now').textContent = now.toLocaleTimeString('es-ES', { hour12: false });
+      }, 1000);
+    })();
+  </script>
+</body>
+</html>

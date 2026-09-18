@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Venues · Segovia Student Card</title>
+  <meta name="description" content="Where the Segovia Student Card works.">
+  <meta name="theme-color" content="#1B2452">
+  <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../assets/icon-180.png">
+  <link rel="manifest" href="../manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Source+Serif+4:ital,opsz,wght@0,8..60,700;0,8..60,900;1,8..60,400&display=swap" rel="stylesheet" crossorigin>
+  <link rel="stylesheet" href="../assets/style.css?v=1">
+</head>
+<body>
+  <div class="proto" data-proto>Prototype. No payment is taken.</div>
+  <header class="site-head">
+    <div class="wrap">
+      <a class="brand" href="../" aria-label="Segovia Student Card, home">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#F96167"/><path fill="#1B2452" d="M9 25V15a7 7 0 0 1 14 0v10h-4V15a3 3 0 0 0-6 0v10z"/></svg>
+        <span>Segovia<br>Student Card</span>
+      </a>
+      <nav class="nav" aria-label="Main">
+        <a class="nav-link" href="../venues/" aria-current="page">Venues</a>
+        <a class="nav-link hide-s" href="../for-venues/">For venues</a>
+        <a class="btn btn-primary btn-small" data-cta href="../join/">Get the card</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-head on-navy">
+      <div class="wrap">
+        <h1 class="display">Venues</h1>
+        <p class="lede" id="lede"></p>
+      </div>
+    </section>
+
+    <section class="section on-cream">
+      <div class="wrap">
+        <p class="notice" id="notice" hidden>No venue has signed yet. The first goal is <span data-fill="launchVenues">10</span> venues in San Lorenzo and the old town, growing to <span data-fill="venueTarget">30</span>. The listings below are examples of how a venue will appear.</p>
+        <div class="filters" id="filters" role="group" aria-label="Filter by area"></div>
+        <ul class="venue-list" id="list"></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-foot">
+    <div class="wrap">
+      <div>
+        <a class="brand" href="../"><span>Segovia Student Card</span></a>
+        <p>A student project from Segovia. Working prototype: no payment is taken. Not affiliated with IE University or with any venue.</p>
+      </div>
+      <nav aria-label="Footer">
+        <a href="../venues/">Venues</a>
+        <a href="../for-venues/">For venues</a>
+        <a href="../join/">Get the card</a>
+        <a href="../verify/">Check a card</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="../assets/config.js?v=1"></script>
+  <script src="../assets/core.js?v=1"></script>
+  <script src="../assets/app.js?v=1"></script>
+  <script>
+    (function () {
+      var App = window.SSCApp;
+      var venues = App.shownVenues();
+      var area = 'All';
+
+      var live = App.realVenues().length > 0;
+      document.getElementById('notice').hidden = live;
+      document.getElementById('lede').textContent = live
+        ? 'Every venue here takes ' + App.config.discount + '% off the bill when you show a valid card.'
+        : 'This is how the list will look. No venue has signed yet.';
+
+      var areas = ['All'];
+      venues.forEach(function (v) { if (areas.indexOf(v.area) === -1) areas.push(v.area); });
+
+      var filters = document.getElementById('filters');
+      var list = document.getElementById('list');
+
+      function render() {
+        filters.innerHTML = areas.map(function (a) {
+          return '<button type="button" class="chip" aria-pressed="' + (a === area) + '" data-area="' + App.esc(a) + '">' + App.esc(a) + '</button>';
+        }).join('');
+        var shown = venues.filter(function (v) { return area === 'All' || v.area === area; });
+        list.innerHTML = shown.map(App.venueItem).join('');
+      }
+
+      filters.addEventListener('click', function (ev) {
+        var chip = ev.target.closest('[data-area]');
+        if (!chip) return;
+        area = chip.getAttribute('data-area');
+        render();
+        var again = filters.querySelector('[aria-pressed="true"]');
+        if (again) again.focus();
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>

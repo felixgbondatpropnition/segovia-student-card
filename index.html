@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Segovia Student Card: 15% off bars, restaurants and shops</title>
+  <meta name="description" content="One card for students in Segovia. €10 a term, 15% off at partner bars, restaurants and shops. A working prototype.">
+  <meta name="theme-color" content="#1B2452">
+  <meta property="og:title" content="Segovia Student Card">
+  <meta property="og:description" content="€10 a term. 15% off at partner bars, restaurants and shops in Segovia. Working prototype.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/icon-180.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Source+Serif+4:ital,opsz,wght@0,8..60,700;0,8..60,900;1,8..60,400&display=swap" rel="stylesheet" crossorigin>
+  <link rel="stylesheet" href="assets/style.css?v=1">
+</head>
+<body>
+  <div class="proto" data-proto>Prototype. No payment is taken.</div>
+  <header class="site-head">
+    <div class="wrap">
+      <a class="brand" href="./" aria-label="Segovia Student Card, home">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#F96167"/><path fill="#1B2452" d="M9 25V15a7 7 0 0 1 14 0v10h-4V15a3 3 0 0 0-6 0v10z"/></svg>
+        <span>Segovia<br>Student Card</span>
+      </a>
+      <nav class="nav" aria-label="Main">
+        <a class="nav-link" href="venues/">Venues</a>
+        <a class="nav-link hide-s" href="for-venues/">For venues</a>
+        <a class="btn btn-primary btn-small" data-cta href="join/">Get the card</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero on-navy">
+      <div class="wrap">
+        <div>
+          <h1 class="display">One card.<br><span class="accent"><span data-fill="discount">15%</span> off</span><br>Segovia.</h1>
+          <p class="kicker"><span data-fill="price">€10</span> a term. Bars, restaurants and shops.</p>
+          <hr class="rule" aria-hidden="true">
+          <p class="lede">Show the card on your phone at a partner venue and pay <span data-fill="discount">15%</span> less. No app to download and no points to collect.</p>
+          <div class="btn-row">
+            <a class="btn btn-primary" data-cta href="join/">Get the card</a>
+            <a class="btn btn-ghost" href="venues/">See the venues</a>
+          </div>
+        </div>
+        <div class="hero-card">
+          <div id="hero-card"></div>
+          <p class="card-caption">The card lives on your phone. Venues scan it with their camera.</p>
+        </div>
+      </div>
+      <div class="aqueduct" data-aqueduct="#2F3C7E"></div>
+    </section>
+
+    <section class="section on-cream" id="how">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 class="display">How it works</h2>
+          <p class="kicker">Three steps, about a minute.</p>
+        </div>
+        <ol class="steps">
+          <li>
+            <div class="num" aria-hidden="true">1</div>
+            <h3>Get the card</h3>
+            <p><span data-fill="price">€10</span> covers the whole term. The card arrives on your phone straight away.</p>
+          </li>
+          <li>
+            <div class="num" aria-hidden="true">2</div>
+            <h3>Show it at the till</h3>
+            <p>Open your card before you pay. The venue scans the code with any phone camera and sees that it is valid.</p>
+          </li>
+          <li>
+            <div class="num" aria-hidden="true">3</div>
+            <h3>Pay <span data-fill="discount">15%</span> less</h3>
+            <p>The discount comes off the bill there and then. The card runs until the last day of term, <span data-fill="termEnds">18 December 2026</span>.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section on-cream" id="maths" style="padding-top:0">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 class="display">Does it pay for itself?</h2>
+          <p class="kicker">Move the slider to what you really spend.</p>
+        </div>
+        <div class="calc">
+          <div>
+            <label class="calc-label" for="spend">What you spend at partner venues</label>
+            <div class="calc-spend"><span id="spend-out">€40</span><small>a week</small></div>
+            <input id="spend" type="range" min="5" max="150" step="5" value="40">
+            <div class="calc-scale"><span>€5</span><span>€150</span></div>
+          </div>
+          <div>
+            <dl class="calc-out">
+              <div><dt>You save each week</dt><dd id="out-week"></dd></div>
+              <div><dt>The card has paid for itself after</dt><dd id="out-payback"></dd></div>
+              <div><dt>In your pocket by the end of term, after the <span data-fill="price">€10</span></dt><dd id="out-net"></dd></div>
+            </dl>
+            <p class="calc-note" id="calc-note"></p>
+          </div>
+        </div>
+        <p class="calc-plain">Spend <b data-fill="breakEven">€67</b> at partner venues and the card has paid for itself. Everything after that is money back.</p>
+      </div>
+    </section>
+
+    <section class="section on-cream" id="venues" style="padding-top:0">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 class="display">Where it works</h2>
+          <p class="kicker" id="venues-kicker"></p>
+        </div>
+        <ul class="venue-list" id="venue-preview"></ul>
+        <div class="more"><a class="btn btn-ghost" href="venues/">See all venues</a></div>
+      </div>
+    </section>
+
+    <section class="section band">
+      <div class="wrap">
+        <div>
+          <h2 class="display">Run a bar, restaurant or shop?</h2>
+          <p>Joining is free. You give cardholders <span data-fill="discount">15%</span> off and we point Segovia's students at your door.</p>
+        </div>
+        <div class="btn-row">
+          <a class="btn btn-navy" href="for-venues/">How it works for venues</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section on-cream" id="faq">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 class="display">Questions</h2>
+        </div>
+        <div class="faq">
+          <details>
+            <summary>Who can get a card?</summary>
+            <p>Any student living in Segovia. A venue may ask to see your student ID next to the card, and the names have to match.</p>
+          </details>
+          <details>
+            <summary>How does a venue check it?</summary>
+            <p>Your card carries a QR code. The venue points any phone camera at it and a page opens showing whether the card is valid, the name on it and the date it runs out. They need no app and no account.</p>
+          </details>
+          <details>
+            <summary>What if I have no signal at the bar?</summary>
+            <p>Once you have opened your card on your phone, it is saved there and opens without a connection. The venue's phone needs a connection the first time it checks a card.</p>
+          </details>
+          <details>
+            <summary>What happens at the end of term?</summary>
+            <p>The card expires on the last day of term. You buy a new one for the next term.</p>
+          </details>
+          <details>
+            <summary>Is this live?</summary>
+            <p>Not yet. This is a working prototype built for a student pitch. You can issue yourself a card and scan it, but no money is taken and no venue has agreed a discount yet.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-foot">
+    <div class="wrap">
+      <div>
+        <a class="brand" href="./"><span>Segovia Student Card</span></a>
+        <p>A student project from Segovia. Working prototype: no payment is taken. Not affiliated with IE University or with any venue.</p>
+      </div>
+      <nav aria-label="Footer">
+        <a href="venues/">Venues</a>
+        <a href="for-venues/">For venues</a>
+        <a href="join/">Get the card</a>
+        <a href="verify/">Check a card</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="assets/config.js?v=1"></script>
+  <script src="assets/core.js?v=1"></script>
+  <script src="assets/app.js?v=1"></script>
+  <script>
+    (function () {
+      var App = window.SSCApp, SSC = window.SSC, config = App.config;
+
+      var mine = App.getCard();
+      document.getElementById('hero-card').innerHTML = App.cardFace(mine ? mine.card : null);
+      App.enableTilt();
+
+      var weeks = SSC.weeksLeft(config.term.ends, new Date());
+      var days = SSC.daysLeft(config.term.ends, new Date());
+      var slider = document.getElementById('spend');
+      function renderMaths() {
+        var spend = Number(slider.value);
+        var m = SSC.termMaths(spend, weeks, config.price, config.discount);
+        document.getElementById('spend-out').textContent = SSC.formatEuros(spend);
+        document.getElementById('out-week').textContent = SSC.formatEuros(m.perWeek);
+        slider.setAttribute('aria-valuetext', SSC.formatEuros(spend) + ' a week');
+        // With no full week left there is nothing to pay back in, so no number is shown.
+        document.getElementById('out-payback').textContent = weeks === 0 ? 'n/a'
+          : (m.weeksToPayBack === 1 ? '1 week' : m.weeksToPayBack + ' weeks');
+        var net = document.getElementById('out-net');
+        net.textContent = (m.net < 0 ? '−' : '') + SSC.formatEuros(Math.abs(m.net));
+        net.classList.toggle('is-neg', m.net < 0);
+        document.getElementById('calc-note').textContent = weeks === 0
+          ? (days === 0 ? 'This term has ended, so there are no weeks left to save in.'
+            : 'There is less than a full week left this term, which ends on ' + SSC.formatDate(config.term.ends) + '.')
+          : 'Worked out on the ' + (weeks === 1 ? 'one full week' : weeks + ' full weeks') + ' left this term, which ends on ' + SSC.formatDate(config.term.ends) + '.' +
+            (m.paysBackInTime ? '' : ' At this spend the card would not pay for itself before then.');
+      }
+      slider.addEventListener('input', renderMaths);
+      renderMaths();
+
+      var real = App.realVenues();
+      document.getElementById('venues-kicker').textContent = real.length
+        ? (real.length === 1 ? 'One venue so far.' : real.length + ' venues so far.')
+        : 'No venue has signed yet. These examples show how a listing will look.';
+      document.getElementById('venue-preview').innerHTML = App.shownVenues().slice(0, 4).map(App.venueItem).join('');
+    })();
+  </script>
+</body>
+</html>
