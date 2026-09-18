@@ -107,15 +107,18 @@
     return { status: isExpired(card.validTo, now) ? 'expired' : 'valid', card: card };
   }
 
-  // The last day of a card bought on `fromIso` that runs for `months` months: the day before the
-  // same date next month. 31 January gives 27 February, because February has no 31st to land on.
-  function validToFor(fromIso, months) {
-    var y = Number(fromIso.slice(0, 4)), m = Number(fromIso.slice(5, 7)) - 1, d = Number(fromIso.slice(8, 10));
-    var target = new Date(Date.UTC(y, m + months, 1));
-    var lastDay = new Date(Date.UTC(target.getUTCFullYear(), target.getUTCMonth() + 1, 0)).getUTCDate();
-    target.setUTCDate(Math.min(d, lastDay));
-    target.setUTCDate(target.getUTCDate() - 1);
-    return target.toISOString().slice(0, 10);
+  function daysBetween(fromIso, toIso) {
+    return Math.round((Date.parse(toIso + 'T00:00:00Z') - Date.parse(fromIso + 'T00:00:00Z')) / 86400000);
+  }
+
+  // Days still to run, today and the last day both counted. 0 once the term is over.
+  function daysLeft(validTo, now) {
+    return Math.max(0, daysBetween(madridDate(now), validTo) + 1);
+  }
+
+  // Full weeks only. Rounding up would promise savings for weeks that do not exist.
+  function weeksLeft(validTo, now) {
+    return Math.floor(daysLeft(validTo, now) / 7);
   }
 
   function toCents(euros) {
@@ -132,13 +135,18 @@
     return Math.ceil((price * 100) / discountPct);
   }
 
-  // monthlySpend in euros at partner venues, against a card paid for by the month.
-  function monthMaths(monthlySpend, price, discountPct) {
-    var savedCents = toCents(savingOn(monthlySpend, discountPct));
+  // weeklySpend in euros at partner venues.
+  function termMaths(weeklySpend, weeks, price, discountPct) {
+    var perWeek = savingOn(weeklySpend, discountPct);
+    var perWeekCents = toCents(perWeek);
+    var total = (perWeekCents * weeks) / 100;
+    var payback = perWeekCents > 0 ? Math.ceil(toCents(price) / perWeekCents) : null;
     return {
-      saved: savedCents / 100,
-      net: (savedCents - toCents(price)) / 100,
-      paysBack: savedCents >= toCents(price)
+      perWeek: perWeek,
+      total: total,
+      net: (perWeekCents * weeks - toCents(price)) / 100,
+      weeksToPayBack: payback,
+      paysBackInTime: payback !== null && payback <= weeks
     };
   }
 
@@ -167,10 +175,11 @@
     madridDate: madridDate,
     isExpired: isExpired,
     checkPayload: checkPayload,
-    validToFor: validToFor,
+    daysLeft: daysLeft,
+    weeksLeft: weeksLeft,
     savingOn: savingOn,
     breakEvenSpend: breakEvenSpend,
-    monthMaths: monthMaths,
+    termMaths: termMaths,
     formatDate: formatDate,
     formatEuros: formatEuros
   };

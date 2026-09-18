@@ -4,7 +4,6 @@ const assert = require('node:assert/strict');
 const SSC = require('../assets/core.js');
 const config = require('../assets/config.js');
 
-// The fixture is a card from the first, per-term version on purpose: those links must keep decoding.
 const card = { id: 'SG-7K2M-9QXD', name: 'María José Núñez', termName: 'Autumn term 2026', validTo: '2026-12-18' };
 const b64url = (s) => Buffer.from(s, 'utf8').toString('base64url');
 
@@ -53,19 +52,15 @@ test('Madrid date follows summer time too', () => {
   assert.equal(SSC.madridDate(new Date('2026-09-30T21:30:00Z')), '2026-09-30');
 });
 
-test('a monthly card runs to the day before the same date next month', () => {
-  assert.equal(SSC.validToFor('2026-09-18', 1), '2026-10-17');
-  assert.equal(SSC.validToFor('2026-03-01', 1), '2026-03-31');
-  assert.equal(SSC.validToFor('2026-12-31', 1), '2027-01-30'); // over the year end
-  assert.equal(SSC.validToFor('2026-01-31', 1), '2026-02-27'); // February has no 31st
-  assert.equal(SSC.validToFor('2028-01-31', 1), '2028-02-28'); // leap year: clamps to the 29th, less a day
-  assert.equal(SSC.validToFor('2026-10-31', 1), '2026-11-29');
-  assert.equal(SSC.validToFor('2026-09-18', 3), '2026-12-17');
-  // A card issued today is valid today and on its last day, and dead the day after.
-  const last = SSC.validToFor('2026-09-18', 1);
-  assert.equal(SSC.isExpired(last, new Date('2026-09-18T10:00:00Z')), false);
-  assert.equal(SSC.isExpired(last, new Date('2026-10-17T21:59:00Z')), false); // 23:59 in Madrid
-  assert.equal(SSC.isExpired(last, new Date('2026-10-17T22:00:00Z')), true); // midnight in Madrid
+test('weeks left counts full weeks only and never overstates', () => {
+  assert.equal(SSC.daysLeft('2026-12-18', new Date('2026-09-18T10:00:00Z')), 92);
+  assert.equal(SSC.weeksLeft('2026-12-18', new Date('2026-09-18T10:00:00Z')), 13); // 92 days
+  assert.equal(SSC.weeksLeft('2026-12-18', new Date('2026-12-11T10:00:00Z')), 1); // 8 days is one week, not two
+  assert.equal(SSC.weeksLeft('2026-12-18', new Date('2026-12-12T10:00:00Z')), 1); // exactly 7 days
+  assert.equal(SSC.weeksLeft('2026-12-18', new Date('2026-12-13T10:00:00Z')), 0);
+  assert.equal(SSC.daysLeft('2026-12-18', new Date('2026-12-18T10:00:00Z')), 1); // last day still counts
+  assert.equal(SSC.daysLeft('2026-12-18', new Date('2026-12-19T10:00:00Z')), 0);
+  assert.equal(SSC.daysLeft('2026-12-18', new Date('2027-01-10T10:00:00Z')), 0);
 });
 
 test('money', () => {
@@ -82,15 +77,16 @@ test('money', () => {
     if (Math.round(SSC.savingOn(c / 100, 15) * 100) !== want) assert.fail('bill of ' + c + ' cents');
   }
   assert.equal(SSC.breakEvenSpend(10, 15), 67);
+  assert.equal(SSC.breakEvenSpend(15, 10), 150);
+  assert.deepEqual(SSC.termMaths(40, 13, 15, 10), { perWeek: 4, total: 52, net: 37, weeksToPayBack: 4, paysBackInTime: true });
+  // The break-even the site prints really is the first spend that covers the price.
+  assert.ok(SSC.savingOn(SSC.breakEvenSpend(config.price, config.discount), config.discount) >= config.price);
+  assert.ok(SSC.savingOn(SSC.breakEvenSpend(config.price, config.discount) - 1, config.discount) < config.price);
   assert.ok(SSC.savingOn(67, 15) >= 10 && SSC.savingOn(66, 15) < 10);
-  assert.equal(SSC.breakEvenSpend(5, 10), 50);
-  assert.deepEqual(SSC.monthMaths(120, 5, 10), { saved: 12, net: 7, paysBack: true });
-  assert.deepEqual(SSC.monthMaths(50, 5, 10), { saved: 5, net: 0, paysBack: true }); // exactly break-even
-  assert.deepEqual(SSC.monthMaths(40, 5, 10), { saved: 4, net: -1, paysBack: false });
-  assert.deepEqual(SSC.monthMaths(0, 5, 10), { saved: 0, net: -5, paysBack: false });
-  // The break-even the site prints really is the first spend that pays back.
-  assert.equal(SSC.monthMaths(SSC.breakEvenSpend(config.price, config.discount), config.price, config.discount).paysBack, true);
-  assert.equal(SSC.monthMaths(SSC.breakEvenSpend(config.price, config.discount) - 1, config.price, config.discount).paysBack, false);
+  assert.deepEqual(SSC.termMaths(40, 13, 10, 15), { perWeek: 6, total: 78, net: 68, weeksToPayBack: 2, paysBackInTime: true });
+  assert.deepEqual(SSC.termMaths(5, 13, 10, 15), { perWeek: 0.75, total: 9.75, net: -0.25, weeksToPayBack: 14, paysBackInTime: false });
+  assert.deepEqual(SSC.termMaths(0, 14, 10, 15), { perWeek: 0, total: 0, net: -10, weeksToPayBack: null, paysBackInTime: false });
+  assert.equal(SSC.termMaths(10, 3, 10, 15).paysBackInTime, false); // 1.50 a week needs 7 weeks
 });
 
 test('ids use the unambiguous alphabet and the right shape', () => {
@@ -113,10 +109,9 @@ test('email check', () => {
   for (const bad of ['', 'a@b', 'a b@c.com', '@c.com', 'a@.c']) assert.ok(!SSC.looksLikeEmail(bad), bad);
 });
 
-test('config is sane and the plan name fits in a card', () => {
+test('config is sane and the term name fits in a card', () => {
   assert.ok(config.price > 0 && config.discount > 0 && config.discount < 100);
-  assert.ok(Number.isInteger(config.plan.months) && config.plan.months >= 1);
-  assert.notEqual(SSC.decodeCard(SSC.encodeCard({ ...card, termName: config.plan.name, validTo: SSC.validToFor('2026-09-18', config.plan.months) })), null);
+  assert.notEqual(SSC.decodeCard(SSC.encodeCard({ ...card, termName: config.term.name, validTo: config.term.ends })), null);
   for (const v of config.venues) {
     assert.ok(v.kind && v.area && v.offer);
     if (!v.example) assert.ok(v.name, 'a real venue needs a name');

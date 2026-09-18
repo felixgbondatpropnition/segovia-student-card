@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Get the card · Segovia Student Card</title>
-  <meta name="description" content="Get your Segovia Student Card: €5 a month. Working prototype: no payment is taken.">
+  <meta name="description" content="Get your Segovia Student Card. Working prototype: no payment is taken.">
   <meta name="theme-color" content="#1B2452">
   <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../assets/icon-180.png">
@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Source+Serif+4:ital,opsz,wght@0,8..60,700;0,8..60,900;1,8..60,400&display=swap" rel="stylesheet" crossorigin>
-  <link rel="stylesheet" href="../assets/style.css?v=2">
+  <link rel="stylesheet" href="../assets/style.css?v=3">
 </head>
 <body>
   <div class="proto" data-proto>Prototype. No payment is taken.</div>
@@ -39,10 +39,15 @@
           <a class="btn btn-primary" href="../card/">Open my card</a>
         </div>
 
+        <div id="closed" hidden>
+          <h1 class="display" style="font-size:clamp(2.2rem,5vw,3.6rem)">This term has ended</h1>
+          <p class="lede" style="margin:18px 0 0;max-width:32em">Cards for <span data-fill="term"></span> ran until <span data-fill="termEnds"></span>. Cards for the next term are not on sale yet.</p>
+        </div>
+
         <div class="join" id="join">
           <div>
             <h1 class="display" id="join-title" style="font-size:clamp(2.2rem,5vw,3.6rem);margin-bottom:28px">Get the card</h1>
-            <p class="notice" id="renew-note" hidden style="margin-bottom:28px">Your new card starts today with a new number, and your saved total starts again from zero.</p>
+            <p class="notice" id="renew-note" hidden style="margin-bottom:28px">Your new card has a new number, and your saved total starts again from zero.</p>
             <ol class="stepper" id="stepper">
               <li aria-current="step"><i>1</i>Your details</li>
               <li><i>2</i>Payment</li>
@@ -72,7 +77,7 @@
             <div id="step-2" hidden>
               <h2 class="step-title" tabindex="-1" id="step-2-title">Payment</h2>
               <div class="order">
-                <span>Segovia Student Card<small>One month, from today</small></span>
+                <span>Segovia Student Card<small data-fill="term"></small></span>
                 <b data-fill="price"></b>
               </div>
               <p class="notice">Payment is switched off in this prototype. Nothing is charged and you will not be asked for card details. In the live version this is where you pay <span data-fill="price"></span>.</p>
@@ -108,15 +113,21 @@
     </div>
   </footer>
 
-  <script src="../assets/config.js?v=2"></script>
-  <script src="../assets/core.js?v=2"></script>
-  <script src="../assets/app.js?v=2"></script>
+  <script src="../assets/config.js?v=3"></script>
+  <script src="../assets/core.js?v=3"></script>
+  <script src="../assets/app.js?v=3"></script>
   <script>
     (function () {
       var App = window.SSCApp, SSC = window.SSC;
       var $ = function (id) { return document.getElementById(id); };
 
-      // An expired card does not block a new one: that is how a student renews for another month.
+      if (!App.termOpen()) {
+        $('join').hidden = true;
+        $('closed').hidden = false;
+        return;
+      }
+
+      // An expired card does not block a new one: that is how a student renews for the next term.
       var mine = App.getCard();
       if (mine && !mine.expired && !mine.outdated) {
         $('join').hidden = true;
@@ -126,7 +137,7 @@
       }
 
       if (mine) {
-        // Renewing, or replacing a card from the earlier version: same person, so no retyping.
+        // Renewing, or replacing a card from another version: same person, so no retyping.
         $('join-title').textContent = 'Renew your card';
         $('renew-note').hidden = false;
         $('name').value = mine.card.name;
@@ -181,6 +192,8 @@
       $('back').addEventListener('click', function () { showStep(1); $('name').focus(); });
 
       $('issue').addEventListener('click', function () {
+        // The term can end while this step is open. Say that, not "storage is blocked".
+        if (!App.termOpen()) { $('join').hidden = true; $('closed').hidden = false; return; }
         var card = App.issueCard($('name').value, $('email').value);
         if (!card) { $('issue-err').hidden = false; return; }
         window.location.href = new URL('card/?new=1', App.siteRoot).href;
