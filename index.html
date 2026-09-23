@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Source+Serif+4:ital,opsz,wght@0,8..60,700;0,8..60,900;1,8..60,400&display=swap" rel="stylesheet" crossorigin>
-  <link rel="stylesheet" href="assets/style.css?v=4">
+  <link rel="stylesheet" href="assets/style.css?v=5">
 </head>
 <body>
   <div class="proto" data-proto>Prototype. No payment is taken.</div>
@@ -39,7 +39,6 @@
         <div>
           <h1 class="display">One card.<br><span class="accent"><span data-fill="discount">10%</span> off</span><br>Segovia.</h1>
           <p class="kicker"><span data-fill="price">€15</span> a term. Bars, restaurants and shops.</p>
-          <hr class="rule" aria-hidden="true">
           <p class="lede">For IE University students. Show the card on your phone at a partner venue and pay <span data-fill="discount">10%</span> less. No app to download and no points to collect.</p>
           <div class="btn-row">
             <a class="btn btn-primary" data-cta href="join/">Get the card</a>
@@ -51,7 +50,7 @@
           <p class="card-caption">The card lives on your phone. Venues scan it with their camera.</p>
         </div>
       </div>
-      <div class="aqueduct" data-aqueduct="#2F3C7E"></div>
+      <div class="aqueduct" data-aqueduct="hero"></div>
     </section>
 
     <section class="section on-cream" id="how">
@@ -62,18 +61,34 @@
         </div>
         <ol class="steps">
           <li>
-            <div class="num" aria-hidden="true">1</div>
-            <h3>Get the card</h3>
+            <div class="step-art" aria-hidden="true">
+              <div class="handset"><div class="handset-screen"><div class="mini-card" id="step-card"></div><small>Your card</small></div></div>
+            </div>
+            <h3><span class="num" aria-hidden="true">1</span>Get the card</h3>
             <p><span data-fill="price">€15</span> covers the whole term. The card arrives on your phone straight away.</p>
           </li>
           <li>
-            <div class="num" aria-hidden="true">2</div>
-            <h3>Show it at the till</h3>
+            <div class="step-art" aria-hidden="true">
+              <div class="handset"><div class="handset-screen handset-ok">
+                <svg viewBox="0 0 108 108"><circle cx="54" cy="54" r="50" fill="none" stroke="#fff" stroke-width="6"/><path d="M32 56l15 15 30-34" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <b>Válida</b>
+                <span><span data-fill="discount">10%</span> off</span>
+                <em>Example</em>
+              </div></div>
+            </div>
+            <h3><span class="num" aria-hidden="true">2</span>Show it at the till</h3>
             <p>Open your card before you pay. The venue scans the code with any phone camera and sees that it is valid.</p>
           </li>
           <li>
-            <div class="num" aria-hidden="true">3</div>
-            <h3>Pay <span data-fill="discount">10%</span> less</h3>
+            <div class="step-art" aria-hidden="true">
+              <div class="receipt">
+                <div class="receipt-head">Example bill</div>
+                <div><span>Food and drink</span><span id="r-bill">€24.00</span></div>
+                <div class="off"><span>Student card −<span data-fill="discount">10%</span></span><span id="r-off">−€2.40</span></div>
+                <div class="total"><span>To pay</span><span id="r-pay">€21.60</span></div>
+              </div>
+            </div>
+            <h3><span class="num" aria-hidden="true">3</span>Pay <span data-fill="discount">10%</span> less</h3>
             <p>The discount comes off the bill there and then. The card runs until the last day of term, <span data-fill="termEnds">18 December 2026</span>.</p>
           </li>
         </ol>
@@ -118,12 +133,12 @@
 
     <section class="section band">
       <div class="wrap">
+        <h2 class="display">Run a bar, restaurant or shop?</h2>
         <div>
-          <h2 class="display">Run a bar, restaurant or shop?</h2>
           <p>Joining is free. You give cardholders <span data-fill="discount">10%</span> off and we point Segovia's students at your door.</p>
-        </div>
-        <div class="btn-row">
-          <a class="btn btn-navy" href="for-venues/">How it works for venues</a>
+          <div class="btn-row">
+            <a class="btn btn-navy" href="for-venues/">How it works for venues</a>
+          </div>
         </div>
       </div>
     </section>
@@ -174,22 +189,32 @@
     </div>
   </footer>
 
-  <script src="assets/config.js?v=4"></script>
-  <script src="assets/core.js?v=4"></script>
-  <script src="assets/app.js?v=4"></script>
+  <script src="assets/config.js?v=5"></script>
+  <script src="assets/core.js?v=5"></script>
+  <script src="assets/app.js?v=5"></script>
   <script>
     (function () {
       var App = window.SSCApp, SSC = window.SSC, config = App.config;
 
       var mine = App.getCard();
       document.getElementById('hero-card').innerHTML = App.cardFace(mine ? mine.card : null);
+      document.getElementById('step-card').innerHTML = App.cardFace(null, { still: true });
       App.enableTilt();
+
+      // The example bill in step three, worked out with the same rounding a real bill gets.
+      // A receipt always shows the cents, which formatEuros drops on whole amounts.
+      var bill = 24, off = SSC.savingOn(bill, config.discount);
+      var euros = function (n) { return new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2 }).format(n); };
+      document.getElementById('r-bill').textContent = euros(bill);
+      document.getElementById('r-off').textContent = '−' + euros(off);
+      document.getElementById('r-pay').textContent = euros(Math.round((bill - off) * 100) / 100);
 
       var weeks = SSC.weeksLeft(config.term.ends, new Date());
       var days = SSC.daysLeft(config.term.ends, new Date());
       var slider = document.getElementById('spend');
       function renderMaths() {
         var spend = Number(slider.value);
+        slider.style.setProperty('--p', ((spend - slider.min) / (slider.max - slider.min) * 100) + '%');
         var m = SSC.termMaths(spend, weeks, config.price, config.discount);
         document.getElementById('spend-out').textContent = SSC.formatEuros(spend);
         document.getElementById('out-week').textContent = SSC.formatEuros(m.perWeek);

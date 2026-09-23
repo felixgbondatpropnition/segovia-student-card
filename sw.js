@@ -1,7 +1,7 @@
 // Network first, cache as the fallback. A student's card has to open in a bar with no
 // signal, but nobody should ever be stuck on an old copy of the site while online.
 var PREFIX = 'ssc-';
-var V = '4'; // the same number as the ?v= on the asset links in every page. Bump both together.
+var V = '5'; // the same number as the ?v= on the asset links in every page. Bump both together.
 var CACHE = PREFIX + 'v' + V;
 var SHELL = [
   './', 'venues/', 'join/', 'card/', 'verify/', 'for-venues/',
