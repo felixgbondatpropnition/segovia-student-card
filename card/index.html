@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Source+Serif+4:ital,opsz,wght@0,8..60,700;0,8..60,900;1,8..60,400&display=swap" rel="stylesheet" crossorigin>
-  <link rel="stylesheet" href="../assets/style.css?v=4">
+  <link rel="stylesheet" href="../assets/style.css?v=5">
 </head>
 <body>
   <div class="proto" data-proto>Prototype. No payment is taken.</div>
@@ -33,10 +33,13 @@
 
   <main>
     <section class="section on-cream" id="no-card" hidden>
-      <div class="wrap">
-        <h1 class="display" style="font-size:clamp(2.2rem,5vw,3.6rem)">No card on this phone yet</h1>
-        <p class="lede" style="margin:18px 0 28px;max-width:32em">Your card is kept on the phone you got it with. If that was another phone or browser, open this page there.</p>
-        <a class="btn btn-primary" href="../join/">Get the card</a>
+      <div class="wrap split">
+        <div>
+          <h1 class="display" style="font-size:clamp(2.2rem,5vw,3.6rem)">No card on this phone yet</h1>
+          <p class="lede" style="margin:18px 0 28px;max-width:32em">Your card is kept on the phone you got it with. If that was another phone or browser, open this page there.</p>
+          <a class="btn btn-primary" href="../join/">Get the card</a>
+        </div>
+        <div class="split-card" aria-hidden="true" id="no-card-face"></div>
       </div>
     </section>
 
@@ -56,6 +59,7 @@
             <p>The venue points any phone camera at this code.</p>
           </div>
         </div>
+        <div class="aqueduct aqueduct-low" data-aqueduct="head"></div>
       </section>
 
       <section class="section on-cream">
@@ -110,17 +114,21 @@
     </div>
   </footer>
 
-  <script src="../assets/config.js?v=4"></script>
-  <script src="../assets/core.js?v=4"></script>
-  <script src="../assets/app.js?v=4"></script>
-  <script src="../vendor/qrcode.js?v=4"></script>
+  <script src="../assets/config.js?v=5"></script>
+  <script src="../assets/core.js?v=5"></script>
+  <script src="../assets/app.js?v=5"></script>
+  <script src="../vendor/qrcode.js?v=5"></script>
   <script>
     (function () {
       var App = window.SSCApp, SSC = window.SSC, config = App.config;
       var $ = function (id) { return document.getElementById(id); };
 
       var mine = App.getCard();
-      if (!mine) { $('no-card').hidden = false; return; }
+      if (!mine) {
+        $('no-card').hidden = false;
+        $('no-card-face').innerHTML = App.cardFace(null, { still: true });
+        return;
+      }
       $('has-card').hidden = false;
 
       var card = mine.card;
