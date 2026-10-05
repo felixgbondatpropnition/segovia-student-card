@@ -10,7 +10,7 @@ pitch ("zero product to build") and lets it run free on GitHub Pages.
 
 - **Get the card** (`join/`): IE students only. Name, an IE student email (`@student.ie.edu`), a payment step that is switched off,
   then a card issued to the phone.
-- **My card** (`card/`): the card, a QR code, and a running total of what the student has
+- **My card** (`card/`): the card with its QR code, and a running total of what the student has
   saved. Opens with no signal once it has been
   opened once (service worker).
 - **Check a card** (`verify/`): what a venue sees after pointing any phone camera at the
@@ -53,6 +53,7 @@ Change one, change all five.
 
 ## Credits
 
-QR codes are drawn by [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator)
-by Kazuhiko Arase (MIT), vendored in `vendor/`. Fonts are Source Serif 4, Instrument Sans and
-JetBrains Mono from Google Fonts. Built with help from Claude (Anthropic).
+QR codes are encoded by [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator)
+by Kazuhiko Arase (MIT), vendored in `vendor/`, and drawn onto the card by `assets/app.js`.
+Fonts are Source Serif 4, Instrument Sans and JetBrains Mono from Google Fonts. Built with help
+from Claude (Anthropic).

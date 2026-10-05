@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Source+Serif+4:ital,opsz,wght@0,8..60,700;0,8..60,900;1,8..60,400&display=swap" rel="stylesheet" crossorigin>
-  <link rel="stylesheet" href="../assets/style.css?v=5">
+  <link rel="stylesheet" href="../assets/style.css?v=6">
 </head>
 <body>
   <div class="proto" data-proto>Prototype. No payment is taken.</div>
@@ -48,15 +48,14 @@
         <div class="wrap">
           <div class="wallet-card">
             <h1 class="sr-only">My card</h1>
-            <p class="kicker" id="ready" style="margin-bottom:16px;text-align:center" hidden>Your card is ready.</p>
+            <p class="kicker" id="ready" hidden>Your card is ready.</p>
             <div id="face"></div>
+          </div>
+          <div class="wallet-text">
+            <h2 class="display">Show this at the till</h2>
+            <p>The venue points any phone camera at the code on your card.</p>
             <p class="status-line" id="status"></p>
             <p class="status-line" id="renew" hidden><a class="btn btn-primary btn-small" href="../join/" id="renew-link">Get a card for <span data-fill="term"></span></a></p>
-          </div>
-          <div class="scan">
-            <h2>Show this at the till</h2>
-            <div class="qr" id="qr"></div>
-            <p>The venue points any phone camera at this code.</p>
           </div>
         </div>
         <div class="aqueduct aqueduct-low" data-aqueduct="head"></div>
@@ -114,10 +113,10 @@
     </div>
   </footer>
 
-  <script src="../assets/config.js?v=5"></script>
-  <script src="../assets/core.js?v=5"></script>
-  <script src="../assets/app.js?v=5"></script>
-  <script src="../vendor/qrcode.js?v=5"></script>
+  <script src="../assets/config.js?v=6"></script>
+  <script src="../assets/core.js?v=6"></script>
+  <script src="../assets/app.js?v=6"></script>
+  <script src="../vendor/qrcode.js?v=6"></script>
   <script>
     (function () {
       var App = window.SSCApp, SSC = window.SSC, config = App.config;
@@ -132,8 +131,8 @@
       $('has-card').hidden = false;
 
       var card = mine.card;
+      // The card carries its own code: the link a venue checks it with.
       $('face').innerHTML = App.cardFace(card);
-      $('qr').innerHTML = App.qrSvg(App.verifyUrl(card));
       App.enableTilt();
 
       if (/[?&]new=1\b/.test(location.search)) {

@@ -109,8 +109,8 @@
       ground: [[0, 0.04], [0.08, 0.3], [0.24, 0.78], [0.42, 0.93], [0.6, 0.9], [0.8, 0.66], [0.93, 0.42], [1, 0.32]] },
     head: { top: 0.3, size: 170, span: 1240, focus: 0.7,
       ground: [[0, 0.1], [0.12, 0.34], [0.32, 0.72], [0.55, 0.94], [0.78, 0.9], [0.92, 0.62], [1, 0.4]] },
-    card: { top: 0.14, scale: 0.9,
-      ground: [[0, 0.36], [0.16, 0.7], [0.4, 0.96], [0.62, 0.94], [0.86, 0.68], [1, 0.4]] }
+    card: { top: 0.775, scale: 0.52,
+      ground: [[0, 0.9], [0.2, 0.975], [0.45, 0.995], [0.7, 0.99], [1, 0.92]] }
   };
 
   // A smooth curve through every point (Catmull-Rom), read at t from 0 to 1.
@@ -201,7 +201,13 @@
 
   // On the card the drawing scales with the card, like everything else on it.
   function cardAqueduct() {
-    return aqueductSvg(SCENES.card, 600, 150, SCENES.card.scale, 'class="card-arches" viewBox="0 0 600 150"');
+    return aqueductSvg(SCENES.card, 600, 378, SCENES.card.scale, 'class="card-arches" viewBox="0 0 600 378"');
+  }
+
+  // A long name (the limit is 40 characters) is set smaller, so it wraps less beside the code.
+  // The join page calls this too, as the preview fills in.
+  function cardNameClass(name) {
+    return 'card-name' + (name ? '' : ' is-blank') + (name && name.length > 24 ? ' is-long' : '');
   }
 
   // card may be null: the face then shows where the name goes instead of inventing one.
@@ -212,15 +218,21 @@
     var validTo = card && card.validTo ? card.validTo : config.term.ends;
     var shortDate = new Intl.DateTimeFormat('en-GB', { timeZone: 'UTC', day: '2-digit', month: 'short', year: 'numeric' })
       .format(new Date(validTo + 'T00:00:00Z'));
+    // An issued card carries the link a venue checks it with. A blank card never carries a
+    // made-up one: its code opens the page where a real card is issued.
+    var code = card
+      ? qrSvg(verifyUrl(card), 'QR code for venues. Scanning it checks this card.')
+      : qrSvg(new URL('join/', siteRoot).href, 'QR code. Scanning it opens the page to get the card.');
     return '<div class="card"' + (opts && opts.still ? '' : ' data-tilt') + '>' +
       cardAqueduct() +
       '<div class="card-in">' +
       '<div class="card-title">Segovia<br>Student Card<span>' + esc(card && card.termName ? card.termName : config.term.name) + '</span></div>' +
-      '<div class="card-badge">' + config.discount + '%<small>OFF</small></div>' +
-      '<div class="card-foot"><div style="min-width:0">' +
-      '<div class="card-name' + (card && card.name ? '' : ' is-blank') + '" data-card-name>' + name + '</div>' +
-      '<div class="card-id">' + id + '</div></div>' +
-      '<div class="card-valid">Valid to<b>' + esc(shortDate) + '</b></div></div>' +
+      '<div class="card-badge">' + config.discount + '% off</div>' +
+      '<div class="card-foot">' +
+      '<div class="' + cardNameClass(card && card.name) + '" data-card-name>' + name + '</div>' +
+      '<div class="card-id">' + id + '</div>' +
+      '<div class="card-valid"><span>Valid to</span> <b>' + esc(shortDate) + '</b></div></div>' +
+      (code ? '<div class="card-qr">' + code + '</div>' : '') +
       '</div><div class="card-sheen"></div></div>';
   }
 
@@ -244,11 +256,28 @@
     });
   }
 
-  function qrSvg(text) {
+  // The code as a single path of dark modules, in module units, with a clear margin of four
+  // modules all round (the quiet zone the standard asks for). Whatever it sits on must be light.
+  // One path, not a square per module, so no faint seams show between rows when it scales.
+  // Level M still reads with about 15% of the code lost to glare or a scratched screen.
+  function qrSvg(text, label) {
+    if (typeof window.qrcode !== 'function') return '';
     var qr = window.qrcode(0, 'M');
     qr.addData(text, 'Byte');
     qr.make();
-    return qr.createSvgTag({ cellSize: 4, margin: 8, scalable: true, title: 'Card QR code' });
+    var n = qr.getModuleCount(), quiet = 4, d = '';
+    for (var r = 0; r < n; r++) {
+      for (var c = 0; c < n; c++) {
+        if (!qr.isDark(r, c)) continue;
+        var run = 1;
+        while (c + run < n && qr.isDark(r, c + run)) run++;
+        d += 'M' + (c + quiet) + ' ' + (r + quiet) + 'h' + run + 'v1h-' + run + 'z';
+        c += run - 1;
+      }
+    }
+    var size = n + quiet * 2;
+    return '<svg viewBox="0 0 ' + size + ' ' + size + '" role="img" aria-label="' + esc(label || 'QR code') + '">' +
+      '<path fill="currentColor" d="' + d + '"/></svg>';
   }
 
   function realVenues() {
@@ -329,6 +358,7 @@
     termNameEs: termNameEs,
     verifyUrl: verifyUrl,
     cardFace: cardFace,
+    cardNameClass: cardNameClass,
     enableTilt: enableTilt,
     qrSvg: qrSvg,
     shownVenues: shownVenues,
